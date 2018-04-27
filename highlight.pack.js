@@ -16643,3 +16643,62 @@ hljs.registerLanguage('zephir', function(hljs) {
 
   return hljs;
 }));
+
+hljs.registerLanguage('ice', function(hljs) {
+  var KEYWORDS = {
+    keyword:
+      '@ if else while do for to break continue return and or not',
+    built_in:
+      'Ellipsis NotImplemented'
+  };
+  var PROMPT = {
+    className: 'meta',  begin: /^(>>|\.\.) /
+  };
+  var SUBST = {
+    className: 'subst',
+    begin: /\{/, end: /\}/,
+    keywords: KEYWORDS,
+    illegal: /#/
+  };
+  var STRING = {
+    className: 'string',
+    contains: [hljs.BACKSLASH_ESCAPE],
+    variants: [
+      {
+        begin: /"/, end: /"/,
+        relevance: 0
+      },
+      hljs.APOS_STRING_MODE,
+      hljs.QUOTE_STRING_MODE
+    ]
+  };
+  var NUMBER = {
+    className: 'number', relevance: 0,
+    variants: [
+      {begin: '\\b(0b[01\']+)'},
+      {begin: '(-?)\\b([\\d\']+(\\.[\\d\']*)?|\\.[\\d\']+)'}
+    ]
+  };
+  var PARAMS = {
+    className: 'params',
+    begin: /\(/, end: /\)/,
+    contains: ['self', PROMPT, NUMBER, STRING]
+  };
+  SUBST.contains = [STRING, NUMBER, PROMPT];
+  return {
+    aliases: ['ice'],
+    keywords: KEYWORDS,
+    illegal: /(<\/|->|\?)|=>/,
+    contains: [
+      PROMPT,
+      NUMBER,
+      STRING,
+      hljs.HASH_COMMENT_MODE,
+      {
+        classname: 'function',
+        begin: /@/,
+        end: /[:({]/,
+      },
+    ]
+  };
+});
